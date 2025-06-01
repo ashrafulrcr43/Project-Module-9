@@ -2,35 +2,42 @@ name: SonarQube Analysis
 
 on:
   push:
-    branches: [ main ]
+    branches:
+      - master
 
 jobs:
   sonarqube:
-    name: SonarQube Scan
-    runs-on: self-hosted
+    runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
+    - name: Checkout code
+      uses: actions/checkout@v3
 
-      - name: Set up Node.js
-        uses: actions/setup-node@v3
-        with:
-          node-version: '18'
+    - name: Set up Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: '18'
 
-      - name: Install dependencies
-        run: npm install
+    - name: Install dependencies
+      run: npm install
 
-      - name: Run tests and generate coverage
-        run: npx jest --coverage
+    - name: Run tests and generate coverage
+      run: npm test
 
-      - name: SonarQube Scan
-        env:
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        run: |
-          npm install -g sonarqube-scanner
-          npx sonar-scanner \
-            -Dsonar.projectKey=js-sonarqube-demo \
-            -Dsonar.sources=. \
-            -Dsonar.host.url=http://192.168.7.77:9000 \
-            -Dsonar.login=${SONAR_TOKEN}
+    - name: Download SonarQube scanner
+      run: |
+        wget https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-5.0.1.3006-linux.zip
+        unzip sonar-scanner-cli-5.0.1.3006-linux.zip
+
+    - name: Run SonarQube scanner
+      env:
+        SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+      run: |
+        ./sonar-scanner-5.0.1.3006-linux/bin/sonar-scanner \
+          -Dsonar.projectKey=js-sonarqube-demo \
+          -Dsonar.sources=. \
+          -Dsonar.tests=. \
+          -Dsonar.test.inclusions=**/*.test.js \
+          -Dsonar.javascript.lcov.reportPaths=coverage/lcov.info \
+          -Dsonar.host.url=http://16.170.221.76:9000 \
+          -Dsonar.login=$SONAR_TOKEN
