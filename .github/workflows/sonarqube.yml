@@ -21,8 +21,14 @@ jobs:
     - name: Install dependencies
       run: npm install
 
+    - name: Fix jest executable permission
+      run: chmod +x node_modules/.bin/jest
+
+    - name: List Jest binary info (for debug)
+      run: ls -l node_modules/.bin/jest
+
     - name: Run tests and generate coverage
-      run: npx jest --coverage
+      run: ./node_modules/.bin/jest --coverage
 
     - name: Download SonarQube scanner
       run: |
