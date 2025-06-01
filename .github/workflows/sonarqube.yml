@@ -1,0 +1,39 @@
+name: SonarQube Analysis
+
+on:
+  push:
+    branches: 
+      - main
+
+jobs:
+  sonarqube:
+    name: SonarQube Scan
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Set up Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: '18'
+
+    - name: Install dependencies
+      run: npm install
+
+    - name: Run tests and coverage
+      run: |
+        npm install --save-dev jest
+        npm test -- --coverage
+
+    - name: SonarQube Scanner
+      env:
+        SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+      run: |
+        npm install -g sonarqube-scanner
+        npx sonar-scanner \
+          -Dsonar.projectKey=js-sonarqube-demo \
+          -Dsonar.sources=. \
+          -Dsonar.host.url=http://<your-server-ip>:9000 \
+          -Dsonar.login=${SONAR_TOKEN}
