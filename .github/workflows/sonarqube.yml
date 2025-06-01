@@ -37,5 +37,5 @@ jobs:
         npx sonar-scanner \
           -Dsonar.projectKey=js-sonarqube-demo \
           -Dsonar.sources=. \
-          -Dsonar.host.url=http://<YOUR-SONARQUBE-IP>:9000 \
+          -Dsonar.host.url=http://192.168.7.77:9000 \
           -Dsonar.login=${SONAR_TOKEN}
