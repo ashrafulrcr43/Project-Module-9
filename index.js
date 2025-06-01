@@ -1,1 +1,4 @@
-function hello(name) { return 'Hello, ' + name; } module.exports = hello;
+function greet(name) {
+  return `Hello, ${name}`;
+}
+module.exports = greet;

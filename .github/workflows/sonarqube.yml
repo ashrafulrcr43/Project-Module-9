@@ -2,8 +2,7 @@ name: SonarQube Analysis
 
 on:
   push:
-    branches: 
-      - main
+    branches: [ main ]
 
 jobs:
   sonarqube:
@@ -19,18 +18,18 @@ jobs:
       with:
         node-version: '18'
 
-    - name: Install dependencies
-      run: npm install
-      
-    - name: Run tests with coverage
-      run: npx jest --coverage
-
-    - name: Run tests and coverage
+    - name: Clean install dependencies
       run: |
-        npm install --save-dev jest
-        npm jest -- --coverage
+        rm -rf node_modules package-lock.json
+        npm install
 
-    - name: SonarQube Scanner
+    - name: Install Jest explicitly
+      run: npm install jest --save-dev
+
+    - name: Run tests and generate coverage
+      run: ./node_modules/.bin/jest --coverage
+
+    - name: SonarQube Scan
       env:
         SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
       run: |
@@ -38,5 +37,5 @@ jobs:
         npx sonar-scanner \
           -Dsonar.projectKey=js-sonarqube-demo \
           -Dsonar.sources=. \
-          -Dsonar.host.url=http://<your-server-ip>:9000 \
+          -Dsonar.host.url=http://<YOUR-SONARQUBE-IP>:9000 \
           -Dsonar.login=${SONAR_TOKEN}

@@ -1,1 +1,5 @@
-const hello = require('./index'); test('hello', () => { expect(hello('World')).toBe('Hello, World'); });
+const greet = require('./index');
+
+test('greet returns correct value', () => {
+  expect(greet("Alice")).toBe("Hello, Alice");
+});
