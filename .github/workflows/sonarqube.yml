@@ -10,32 +10,31 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v3
+      - name: Checkout code
+        uses: actions/checkout@v3
 
-    - name: Set up Node.js
-      uses: actions/setup-node@v3
-      with:
-        node-version: '18'
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
 
-    - name: Clean install dependencies
-      run: |
-        rm -rf node_modules package-lock.json
-        npm install
+      - name: Install dependencies
+        run: |
+          rm -rf node_modules package-lock.json
+          npm install
 
-    - name: Install Jest explicitly
-      run: npm install jest --save-dev
+      - name: Install Jest explicitly
+        run: npm install jest --save-dev
 
-    - name: Run tests and generate coverage
-      run: ./node_modules/.bin/jest --coverage
+      - name: Run tests and generate coverage
+        run: ./node_modules/.bin/jest --coverage
 
-    - name: SonarQube Scan
-      env:
-        SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-      run: |
-        npm install -g sonarqube-scanner
-        npx sonar-scanner \
-          -Dsonar.projectKey=js-sonarqube-demo \
-          -Dsonar.sources=. \
-          -Dsonar.host.url=http://192.168.7.77:9000 \
-          -Dsonar.login=${SONAR_TOKEN}
+      - name: SonarQube Scan
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        run: |
+          npx sonar-scanner \
+            -Dsonar.projectKey=js-sonarqube-demo \
+            -Dsonar.sources=. \
+            -Dsonar.host.url=http://192.168.7.77:9000 \
+            -Dsonar.login=${SONAR_TOKEN}
